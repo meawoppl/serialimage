@@ -57,7 +57,8 @@ Add the following to your `Cargo.toml` to enable this:
 serialimage = { version = "3.0.0", features = ["fitsio"] }
 ```
 
-The FITS I/O is hidden behind a feature flag to avoid compilation errors on `wasm` targets.
+FITS output uses the pure-Rust [`fitsio-pure`](https://crates.io/crates/fitsio-pure) crate, so it needs no C toolchain or
+system cfitsio, and it builds for `wasm` targets.
  
 */
 

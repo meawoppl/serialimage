@@ -17,8 +17,8 @@ exclude = [".github"]
 [features]
 #! ## Optional feature: FITS Output 
 
-## The `fitsio` feature enables FITS output support for the [`DynamicSerialImage`] and [`SerialImageBuffer`] types, and requires the `fitsio` crate. 
-fitsio = ["dep:fitsio"]
+## The `fitsio` feature enables FITS output support for the [`DynamicSerialImage`] and [`SerialImageBuffer`] types, and requires the `fitsio-pure` crate.
+fitsio = ["dep:fitsio-pure"]
 
 [dependencies]
 image = "0.25"
@@ -27,8 +27,8 @@ chrono = "0.4"
 
 #! ## Optional dependency: FITS Output
 
-## The `fitsio` crate is required to enable the `fitsio` feature.
-fitsio = { version = "0.21", optional = true }
+## The pure-Rust `fitsio-pure` crate is required to enable the `fitsio` feature.
+fitsio-pure = { version = "0.20.1", features = ["compat"], optional = true }
 once_cell = "1.18"
 
 [build-dependencies]

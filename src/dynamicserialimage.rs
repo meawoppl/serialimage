@@ -2,7 +2,7 @@
 #![warn(missing_docs)]
 
 #[cfg(feature = "fitsio")]
-use fitsio::errors::Error as FitsError;
+use fitsio_pure::compat::errors::Error as FitsError;
 #[cfg(feature = "fitsio")]
 use std::path::{Path, PathBuf};
 
@@ -150,11 +150,11 @@ impl DynamicSerialImage {
     ///  * `dir_prefix` - The directory where the file will be saved.
     ///  * `file_prefix` - The prefix of the file name. The file name will be of the form `{file_prefix}_{timestamp}.fits`.
     ///  * `progname` - The name of the program that generated the image.
-    ///  * `compress` - Whether to compress the FITS file.
+    ///  * `compress` - Compressed output is not supported; `true` returns an error.
     ///  * `overwrite` - Whether to overwrite the file if it already exists.
     ///
     /// # Errors
-    ///  * [`fitsio::errors::Error`] with the error description.
+    ///  * [`fitsio_pure::compat::errors::Error`] with the error description.
     pub fn savefits(
         &self,
         dir_prefix: &Path,

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "fitsio")]
 use chrono::DateTime;
 #[cfg(feature = "fitsio")]
-use fitsio::{
+use fitsio_pure::compat::{
     errors::Error as FitsError,
     images::{ImageDescription, ImageType, WriteImage},
     FitsFile,
@@ -293,12 +293,12 @@ impl<T: Primitive + WriteImage> SerialImageBuffer<T> {
     ///  * `dir_prefix` - The directory where the file will be saved.
     ///  * `file_prefix` - The prefix of the file name. The file name will be of the form `{file_prefix}_{timestamp}.fits`.
     ///  * `progname` - The name of the program that generated the image.
-    ///  * `compress` - Whether to compress the FITS file.
+    ///  * `compress` - Compressed output is not supported; `true` returns an error.
     ///  * `overwrite` - Whether to overwrite the file if it already exists.
     ///  * `image_type` - The type of the image data (e.g. [`ImageType::UnsignedByte`])
     ///
     /// # Errors
-    ///  * [`fitsio::errors::Error`] with the error description.
+    ///  * [`fitsio_pure::compat::errors::Error`] with the error description.
     fn savefits_generic(
         &self,
         dir_prefix: &Path,
@@ -308,6 +308,11 @@ impl<T: Primitive + WriteImage> SerialImageBuffer<T> {
         overwrite: bool,
         image_type: ImageType,
     ) -> Result<PathBuf, FitsError> {
+        if compress {
+            return Err(FitsError::Message(
+                "Compressed FITS output is not supported".to_owned(),
+            ));
+        }
         if !dir_prefix.exists() {
             return Err(FitsError::Io(io::Error::new(
                 io::ErrorKind::NotFound,
@@ -373,14 +378,7 @@ impl<T: Primitive + WriteImage> SerialImageBuffer<T> {
             dimensions: &imgsize,
         };
 
-        let path = Path::new(dir_prefix).join(Path::new(&format!(
-            "{}_{}.fits{}",
-            file_prefix,
-            timestamp,
-            if compress { "[compress]" } else { "" }
-        )));
-
-        let mut fptr = FitsFile::create(path)
+        let mut fptr = FitsFile::create(&fpath)
             .with_custom_primary(&img_desc)
             .open()?;
         let hdu = fptr.primary_hdu()?;
@@ -579,11 +577,11 @@ impl SerialImageBuffer<u8> {
     ///  * `dir_prefix` - The directory where the file will be saved.
     ///  * `file_prefix` - The prefix of the file name. The file name will be of the form `{file_prefix}_{timestamp}.fits`.
     ///  * `progname` - The name of the program that generated the image.
-    ///  * `compress` - Whether to compress the FITS file.
+    ///  * `compress` - Compressed output is not supported; `true` returns an error.
     ///  * `overwrite` - Whether to overwrite the file if it already exists.
     ///
     /// # Errors
-    ///  * [`fitsio::errors::Error`] with the error description.
+    ///  * [`fitsio_pure::compat::errors::Error`] with the error description.
     pub fn savefits(
         &self,
         dir_prefix: &Path,
@@ -741,11 +739,11 @@ impl SerialImageBuffer<u16> {
     ///  * `dir_prefix` - The directory where the file will be saved.
     ///  * `file_prefix` - The prefix of the file name. The file name will be of the form `{file_prefix}_{timestamp}.fits`.
     ///  * `progname` - The name of the program that generated the image.
-    ///  * `compress` - Whether to compress the FITS file.
+    ///  * `compress` - Compressed output is not supported; `true` returns an error.
     ///  * `overwrite` - Whether to overwrite the file if it already exists.
     ///
     /// # Errors
-    ///  * [`fitsio::errors::Error`] with the error description.
+    ///  * [`fitsio_pure::compat::errors::Error`] with the error description.
     pub fn savefits(
         &self,
         dir_prefix: &Path,
@@ -895,11 +893,11 @@ impl SerialImageBuffer<f32> {
     ///  * `dir_prefix` - The directory where the file will be saved.
     ///  * `file_prefix` - The prefix of the file name. The file name will be of the form `{file_prefix}_{timestamp}.fits`.
     ///  * `progname` - The name of the program that generated the image.
-    ///  * `compress` - Whether to compress the FITS file.
+    ///  * `compress` - Compressed output is not supported; `true` returns an error.
     ///  * `overwrite` - Whether to overwrite the file if it already exists.
     ///
     /// # Errors
-    ///  * [`fitsio::errors::Error`] with the error description.
+    ///  * [`fitsio_pure::compat::errors::Error`] with the error description.
     pub fn savefits(
         &self,
         dir_prefix: &Path,
